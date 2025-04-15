@@ -34,7 +34,8 @@ Numerical Operations: NumPy
 Backend: FastAPI  
 (for deployment): Uvicorn 
 Frontend: HTML5, CSS3, 
->>> conda
+
+---> conda? 
 Containerization: Docker
 python-dotenv, RESTful principles, JSON data format
 FastAPI's CORSMiddleware or Flask-CORS extension
