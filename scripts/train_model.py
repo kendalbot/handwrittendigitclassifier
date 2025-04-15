@@ -11,6 +11,15 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
 import os
 
+# --- Determine Project Root and Define Output Path ---
+# Get the absolute path of the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Assume the project root is one level up from the script directory
+project_root = os.path.dirname(script_dir)
+# Define the output directory relative to the project root
+OUTPUT_DIR_NAME = "mnist_cnn_model"
+OUTPUT_DIR = os.path.join(project_root, OUTPUT_DIR_NAME)
+
 print("TensorFlow version:", tf.__version__)
 
 #configuration
