@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model #load_model for 2.0 erroring
 from tensorflow.keras.layers import (
     Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Input
 )
@@ -191,7 +191,80 @@ try:
     print(f"Training history plot saved to: {plot_path}")
 except Exception as e:
     print(f"Error saving plot: {e}")
-
+#Rework this when I am not sick of plots
 # plt.show() #display the plot. I dont think this helps right now
+#training history plots
+#reloading model data
+#"best" model --> 
+print("Plotting training history...")
+acc = history.history.get('accuracy', [])
+val_acc = history.history.get('val_accuracy', [])
+loss = history.history.get('loss', [])
+val_loss = history.history.get('val_loss', [])
+epochs_range = range(len(acc))
 
-print("Training script finished.")
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+if acc and val_acc:
+    plt.plot(epochs_range, acc, label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+else:
+    plt.text(0.5, 0.5, 'Accuracy data not available', ha='center', va='center')
+    plt.title('Accuracy Plot Unavailable')
+
+plt.subplot(1, 2, 2)
+if loss and val_loss:
+    plt.plot(epochs_range, loss, label='Training Loss')
+    plt.plot(epochs_range, val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+else:
+     plt.text(0.5, 0.5, 'Loss data not available', ha='center', va='center')
+     plt.title('Loss Plot Unavailable')
+plt.suptitle('Model Training History', fontsize=16)
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plot_path = os.path.join(OUTPUT_DIR, PLOT_FILENAME)
+try:
+    plt.savefig(plot_path)
+    print(f"Training history plot saved to: {plot_path}")
+except Exception as e:
+    print(f"Error saving plot: {e}")
+print("\n--- Evaluating Model on Test Set ---")
+model_load_path = os.path.join(OUTPUT_DIR, MODEL_FILENAME)
+
+
+
+
+
+if os.path.exists(model_load_path):
+    print(f"Loading best model from: {model_load_path}")
+    try:
+        #For cusotm objects --> custom_objects={}
+        loaded_model = load_model(model_load_path)
+        print("Model loaded successfully.")
+
+        print("Evaluating model on test data...")
+        test_loss, test_acc = loaded_model.evaluate(x_test, y_test, verbose=0) #verbose=0 for cleaner output
+
+        print(f'\nTest Accuracy: {test_acc*100:.2f}%')
+        print(f'Test Loss: {test_loss:.4f}')
+
+        #print("\nLoaded Model Summary:")
+        #loaded_model.summary()
+
+    except Exception as e:
+        print(f"Error loading or evaluating model: {e}")
+        print("Please ensure the model file exists and is compatible.")
+
+else:
+    print(f"Model file not found at {model_load_path}.")
+    print("Skipping evaluation. Please train the model first.")
+
+
+print("\nTraining script finished. For now.")
